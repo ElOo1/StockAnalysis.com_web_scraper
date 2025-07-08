@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import date
 import csv
@@ -13,53 +14,62 @@ import os
 def initialize_driver():
     return  webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-def login_to_website(driver, login_url: str, username_field: str, password_field: str, username: str, password: str, login_button: str):
+def login_to_website(driver, login_url: str, username_field: str, password_field: str, username: str, password: str, login_button):
     """Log in to the website and verify login success."""
     try:
         driver.get(login_url)
         time.sleep(1) # Allow page to load
+        print("Navigated to login page")
 
         #Enter credentials
         username_field_elem = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, username_field)))
         password_field_elem = driver.find_element(By.ID, password_field)
         username_field_elem.send_keys(username)
+        print("Entered username")
         password_field_elem.send_keys(password)
+        print("Entered password")
 
         # Click login button
         login_button_elem = driver.find_element(By.XPATH, login_button)
         login_button_elem.click()
+        print("Clicked login button")
 
-        # Verify login success by checking for a post-login element
-        WebDriverWait(driver, 10).until((EC.presence_of_element_located(By.XPATH, "//a[contains(text(), 'Log out')] | //div[contains(@class, 'user-profile')]")))
+        #  Verify login success by checking for a post-login element
         print("Login Successful")
         return True
+    except TimeoutException as e:
+        print(f"Timeout error: {e}")
+        return False
+    except NoSuchElementException as e:
+        print(f"Element not found: {e}")
+        return False
     except Exception as e:
         print(f"Error during login: {e}")
         return False
 
-def login_to_website(login_url: str, username_field: str, password_field: str, username: str, password: str):
-    try:
-        # Navigate to the specific page on stockanalysis.com
-        driver.get(login_url)
+# def login_to_website(driver, login_url: str, username_field: str, password_field: str, username: str, password: str):
+#     try:
+#         # Navigate to the specific page on stockanalysis.com
+#         driver.get(login_url)
 
-        # Login Credentials
-        usernamefield = driver.find_element(By.ID, username_field)
-        passwordfield = driver.find_element(By.ID, password_field)
-        usernamefield.send_keys(username)
-        passwordfield.send_keys(password)
-        login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
-        login_button.click()
-        time.sleep(3)
-        return print("Login Successful")
+#         # Login Credentials
+#         usernamefield = driver.find_element(By.ID, username_field)
+#         passwordfield = driver.find_element(By.ID, password_field)
+#         usernamefield.send_keys(username)
+#         passwordfield.send_keys(password)
+#         login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+#         login_button.click()
+#         time.sleep(3)
+#         return print("Login Successful")
 
-    except Exception as e:
-        return print(f"Error occured at login: {e}")
-    # finally:
-    #     driver.quit()
+#     except Exception as e:
+#         return print(f"Error occured at login: {e}")
+#     finally:
+#          driver.quit()
 
 
-def table_data_extract_from_html(data_url: str, csv_file_name: str):
-    # Exchanges Lists
+def table_data_extract_from_html(driver, data_url: str, csv_file_name: str):
+    """Extract table data from a paginated webpage"""
     try:
         driver.get(data_url)
         time.sleep(3)
@@ -98,7 +108,7 @@ def table_data_extract_from_html(data_url: str, csv_file_name: str):
         return print(f"Error occured navigation: {e}")
 
 # Check if button is enabeled and clickable
-def is_button_disabled(data_url: str, button_name: str):
+def is_button_disabled(driver, data_url: str, button_name: str):
 
     # Desired Url
     driver.get(data_url)
@@ -124,7 +134,7 @@ def is_button_disabled(data_url: str, button_name: str):
     
 
 
-def button_download_data (data_url: str, csv_file_name: str, csv_file_path: str):
+def button_download_data (driver, data_url: str, csv_file_name: str, csv_file_path: str):
     if os.path.exists(csv_file_path):
         print("File already exists")
         answer  = input("Would you like to continue by appending latest version Y/N: ")
@@ -152,7 +162,7 @@ def button_download_data (data_url: str, csv_file_name: str, csv_file_path: str)
                 return print(f"Error occured navigation: {e}")
 
 
-def iterable_table_data_extract_from_html(data_url: str, csv_file_name: str, button_class_name: str):
+def iterable_table_data_extract_from_html(driver, data_url: str, csv_file_name: str, button_class_name: str):
     try:
         driver.get(data_url)
         time.sleep(3)
