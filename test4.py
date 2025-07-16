@@ -21,7 +21,7 @@ pass_field = "password"
 user = "GACM000001@gmail.com"
 password = "hizkem-danto1-dutguV"
 
-login_to_website(login_url, user_field, pass_field, user, password)
+login_to_website(driver, login_url, user_field, pass_field, user, password)
 
 driver.get(data_url)
 time.sleep(3)  # Wait for page to load

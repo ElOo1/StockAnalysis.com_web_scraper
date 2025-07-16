@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from Stock_Analysis_Main import *
+from utils import data_processing, web_navigation
 import time
 
 # Set up the webDriver (automatically downloads and configures ChromeDriver)
@@ -18,6 +19,8 @@ button_name = "button.controls-btn.xs\:pl-1.xs\:pr-1\.5.bp\:text-sm.sm\:pl-3.sm\
 next_table_button = ".controls-btn"
 next_table_button2 = "//button[contains(@class, 'controls-btn')]"
 
+table_selector = "table"
+
 
 user_field = "email"
 pass_field = "password"
@@ -26,10 +29,7 @@ password = "hizkem-danto1-dutguV"
 
 
 #login_to_website(driver, login_url, user_field, pass_field, user, password)
-driver = initialize_driver()
-login_to_website(driver, login_url, user_field, pass_field, user, password, login_button_name)
-#button_download_data(data_url, "Over_The_Counter_Stocks.csv", file_path)
-#iterable_table_data_extract_from_html(data_url, file_name, next_table_button)
-#is_button_disabled(data_url, button_name)
-
+driver = web_navigation.initialize_driver()
+web_navigation.login_to_website(driver, login_url, user_field, pass_field, user, password, login_button_name)
+scrape_table_website(driver, data_url, table_selector, button_name)
 
