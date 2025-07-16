@@ -13,7 +13,8 @@ from Stock_Analysis_Main import *
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 data_url = "https://stockanalysis.com/list/otc-stocks/"
 button_name = "button.controls-btn.xs\:pl-1.xs\:pr-1\.5.bp\:text-sm.sm\:pl-3.sm\:pr-1"
-
+login_button_name = "//button[@type='submit']"
+#button_name = "button[data-test='next-page']"  # Updated CSS selector for "Next" button
 
 login_url = "https://stockanalysis.com/login/"
 user_field = "email"
@@ -21,8 +22,16 @@ pass_field = "password"
 user = "GACM000001@gmail.com"
 password = "hizkem-danto1-dutguV"
 
-login_to_website(driver, login_url, user_field, pass_field, user, password)
+# Initialize driver and log in
+driver = web_navigation.initialize_driver()
+login_sucess = web_navigation.login_to_website(driver, login_url, user_field, pass_field, user, password, login_button_name)
 
+if not login_sucess:
+    print("Login failed, exiting.")
+    driver.quit()
+    exit()
+
+# Navigate to data page
 driver.get(data_url)
 time.sleep(3)  # Wait for page to load
 
