@@ -8,6 +8,7 @@ import time
 
 
 def scrape_table_website(driver, url, table_selector, next_button_selector):
+
     "Function to scrape a table and save to csv"
     try:
         driver.get(url)
@@ -23,7 +24,8 @@ def scrape_table_website(driver, url, table_selector, next_button_selector):
         if table:
             print("Table exists in page.")
         else:
-            return print("No table on page.")
+            print("No table on page.")
+            return []
 
         complete_table_data = []
         # Extract table headers
@@ -33,14 +35,16 @@ def scrape_table_website(driver, url, table_selector, next_button_selector):
         while True:
             # Wait for the table to be present
             rows = data_processing._extract_table_rows(driver, table_selector)
-            web_navigation.button_click(driver, next_button_selector)
+            # web_navigation.button_click(driver, next_button_selector)
             complete_table_data.append(rows)
             if web_navigation.is_button_disabled(driver, url, next_button_selector):
                 break
+            time.sleep(1) # Allow page to load after clicking
 
         return complete_table_data
 
     except Exception as e:
-        return print(f"Error occured navigation: {e}")
+        print(f"Error occured navigation: {e}")
+        return []
     finally:
         driver.quit()

@@ -34,7 +34,12 @@ def login_to_website(driver, login_url: str, username_field: str, password_field
         login_button_elem.click()
         print("Clicked login button")
 
+        # Wait for redirect or post-login element(ex: dashboard or some logout link)
+        #WebDriverWait(driver, 10).until(EC.url_changes(login_url))
+        #print("Current URL after login:", driver.current_url)
+
         #  Verify login success by checking for a post-login element
+        time.sleep(15)
         print("Login Successful")
         return True
     except TimeoutException as e:
@@ -46,6 +51,21 @@ def login_to_website(driver, login_url: str, username_field: str, password_field
     except Exception as e:
         print(f"Error during login: {e}")
         return False
+
+# Check that website persisted after login navigation
+def verify_login_persistent(driver, login_verification_selector):
+    try:
+        if WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, login_verification_selector))):
+        #if driver.find_element(By.LINK_TEXT, login_verification_selector):
+            print("Login session maintainerd on data page")
+    except Exception as e:
+        print(f"Login session lost on data page: {str(e)}")
+        # Save cookies for debugging
+        cookies = driver.get_cookies()
+        print(f"Cookies after navigation: {cookies}")
+        driver.quit()
+        exit()
+
 
 # Check if button is enabeled and clickable
 def is_button_disabled(driver, data_url: str, button_name: str):

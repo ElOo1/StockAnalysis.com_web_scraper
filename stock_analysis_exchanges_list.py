@@ -49,6 +49,8 @@ try:
     wait = WebDriverWait(driver, 5)
     table = wait.until(EC.presence_of_element_located((By.XPATH, "//table")))
 
+    print(table)
+
 except Exception as e:
     print(f"Error occured navigation: {e}")
 
