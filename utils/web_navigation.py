@@ -84,10 +84,11 @@ def is_button_disabled(driver, data_url: str, button_name: str):
         is_enabled = button.is_enabled()
 
         # Method 2: Check for disabled attribute
-        disabled_attr = button.get_attribute("disabled")
+        # disabled_attr = button.get_attribute("disabled")
 
         # Determine button state
-        is_disabled = not is_enabled or disabled_attr is not None
+        # is_disabled = not is_enabled or disabled_attr is not None
+        is_disabled = not is_enabled
 
         if is_disabled:
             print("Button is disabled")
@@ -105,7 +106,8 @@ def button_click(driver, button_class_name):
     try:
         wait = WebDriverWait(driver, 5)
 
-        button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, button_class_name)))
+        # button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, button_class_name)))
+        button = wait.until(EC.element_to_be_clickable((By.XPATH, button_class_name)))
 
         # Check if button is disabled
         if button.get_attribute("disabled") or not button.is_enabled():
@@ -119,4 +121,5 @@ def button_click(driver, button_class_name):
     except Exception as e:
         print(f"Error during button click or data extraction {e}")
         return False
+
 

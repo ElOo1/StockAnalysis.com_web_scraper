@@ -28,18 +28,28 @@ def scrape_table_website(driver, url, table_selector, next_button_selector):
             return []
 
         complete_table_data = []
+
         # Extract table headers
         headers = data_processing._extract_table_headers(driver, table_selector)
         complete_table_data.append(headers)
+        print("headrs appended")
 
         while True:
+            wait = WebDriverWait(driver, 5)
+            table = wait.until(EC.presence_of_element_located((By.XPATH, "//table")))
             # Wait for the table to be present
+            # time.sleep(3) # Allow page to load after clicking
+
             rows = data_processing._extract_table_rows(driver, table_selector)
-            # web_navigation.button_click(driver, next_button_selector)
+
             complete_table_data.append(rows)
-            if web_navigation.is_button_disabled(driver, url, next_button_selector):
+
+            element = driver.find_element(By.XPATH, next_button_selector)
+
+            element.click()
+
+            if not element.is_enabled():
                 break
-            time.sleep(1) # Allow page to load after clicking
 
         return complete_table_data
 
