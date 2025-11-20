@@ -103,15 +103,16 @@ def _extract_json_data_to_dataframe(json, columns_list):
 
     all_data = []
     counter = 1
-    while True:
 
-        if not isinstance(json, list):
-            # Adjust based on API struture
-            print("No Data")
-            break
+    if not isinstance(json, list):
+        # Adjust based on API struture
+        print("No Data")
 
         for i in json:
             all_data.append([i[1].get(col, None) for col in columns_list])
 
         counter +=1
     return all_data
+
+
+
